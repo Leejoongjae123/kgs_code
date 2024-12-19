@@ -642,7 +642,7 @@ def job():
   # PrintS3FileNames()
 
   #=============URL가져오기
-  # GetSearch()
+  GetSearch()
 
 
   #=============상세정보 가져오기
