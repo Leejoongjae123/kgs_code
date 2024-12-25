@@ -584,7 +584,7 @@ def UploadImageToS3(inputData):
 def insert_dummy_data(inputData):
   # 데이터베이스 연결 정보
     initial_db_params = {
-        'dbname': 'postgres',
+        'dbname': 'htc-aikr-prod',
         'user': 'postgres',
         'password': 'ddiMaster1!',
         'host': '127.0.0.1',
@@ -597,8 +597,8 @@ def insert_dummy_data(inputData):
         
         # 더미 데이터 삽입
         insert_query = """
-            INSERT INTO collection_data (name, file_name, file_path, method, collection_id,reg_time)
-            VALUES (%s, %s, %s, %s, %s,%s)
+            INSERT INTO "COLLECTION_DATA" ("NAME", "FILE_NAME", "FILE_PATH", "METHOD", "COLLECTION_ID")
+            VALUES (%s, %s, %s, %s, %s)
         """
         # dummy_data = [
         #     ('name1', 'file1', '/path/to/file1', 'AUTO', 78),
@@ -610,13 +610,13 @@ def insert_dummy_data(inputData):
         comparisonData=inputData['KGS-CODE'][0]['data']['basic_info']['comparisonFile']
         koreanTitle=inputData['KGS-CODE'][0]['data']['basic_info']['koreanTitle']
         
-        datas.append((koreanTitle,comparisonData['fileName'], comparisonData['fileUrl'], 'AUTO', 78,timeNow))
+        datas.append((koreanTitle,comparisonData['fileName'], comparisonData['fileUrl'], 'AUTO', 78))
         for historyData in historyDatas:
           if historyData['revisionReasonFile']:
-            datas.append((koreanTitle,historyData['revisionReasonFile'], historyData['fileUrl'], 'AUTO', 78,timeNow))
+            datas.append((koreanTitle,historyData['revisionReasonFile'], historyData['fileUrl'], 'AUTO', 78))
           if historyData['eBookFile']:
-            datas.append((koreanTitle,historyData['eBookFile'], historyData['fileUrl'], 'AUTO', 78,timeNow))
-        pprint.pprint(datas)
+            datas.append((koreanTitle,historyData['eBookFile'], historyData['fileUrl'], 'AUTO', 78))
+        # pprint.pprint(datas)
         for data in datas:
             cursor.execute(insert_query, data)
         
@@ -705,12 +705,11 @@ def job():
 
 # 매주 월요일 9시에 job 함수 실행
 schedule.every().monday.at("09:00").do(job)
-firstFlag=True
+
+print('처음엔 무조건 시작')
+job()
+
 while True:
-    if firstFlag:
-        print("첫 실행")
-        firstFlag=False
-        job()
     print("현재시간은:",datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     schedule.run_pending()
     time.sleep(10)  # 1분마다 체크
